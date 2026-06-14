@@ -61,8 +61,7 @@ function handleLogin($db) {
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['created_at'] = $user['created_at'];
-        
-        header("Location: " . $ref);
+        header("Location: " .($ref === 'http://lebonclone.fr/auth/login.php' ? '/' : $ref));
     } else {
         $_SESSION['error'] = "Adresse mail ou Mot de passe incorrect.";
         header("Location: /auth/login.php");

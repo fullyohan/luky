@@ -1,2 +1,2 @@
 public/uploads/*
-!public/uploads/.gitkeep
+!public/uploads/image*.png

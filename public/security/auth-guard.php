@@ -10,6 +10,7 @@ function require_auth() {
 function require_guest() {
     if (isset($_SESSION['user_id'])) {
         $_SESSION['error'] = "Vous etes deja connecte" ;
+        $_POST['ref'] = $_SERVER['HTTP_REFERER'];
         header("Location: /");
         exit();
     }

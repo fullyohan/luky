@@ -6,6 +6,7 @@ require_once "../components/Footer.php";
 require_once '../components/Table.php';
 require_once "../components/Button.php";
 require_once "../../config/database.php";
+require_once "../components/Alert.php";
 $route_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_FILENAME);
 $parent_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME);
 require_once "../security/auth-guard.php";
@@ -26,7 +27,6 @@ while ($annonce = mysqli_fetch_assoc($result)) {
         'Date de pub' => (new DateTime($annonce['created_at']))->format('d-m-Y'),
     ];
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +42,6 @@ while ($annonce = mysqli_fetch_assoc($result)) {
 </head>
 
 <body class="bg-light d-flex flex-column min-vh-100">
-
     <?php NavBar($route_name, $parent_name) ?>
     <div class="container flex-grow-1 py-5 px-4">
         <div class="row g-4">
@@ -51,7 +50,8 @@ while ($annonce = mysqli_fetch_assoc($result)) {
                 <div id="mes-annonces" class="card shadow-sm border-0 p-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold m-0 fs-5">Mes annonces en ligne</h4>
-                        <span class="badge bg-success"><?= count($annonces); ?> annonces</span>
+                        <span class="badge bg-primary text-white rounded-pill px-3"><?= count($annonces); ?> annonces</span>
+                        <?= Alert()?>
                     </div>
 
                     <div class="table-responsive">
@@ -75,7 +75,6 @@ while ($annonce = mysqli_fetch_assoc($result)) {
                                         </button>
                                     </form>
                                 </div>";
-
                             },
                             renderEmpty: function () {
                                 echo "
@@ -89,7 +88,6 @@ while ($annonce = mysqli_fetch_assoc($result)) {
                                     value: 'Publier une annonce',
                                     variant: 'secondary'
                                 );
-
                                 echo "</div>";
                             }
                         );

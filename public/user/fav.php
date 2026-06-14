@@ -58,7 +58,7 @@ while ($fav_row = mysqli_fetch_assoc($fav_result)) {
                 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0 fs-5">Mes annonces favorites</h4>
-                    <span class="badge bg-danger text-white rounded-pill px-3">
+                    <span class="badge bg-primary text-white rounded-pill px-3">
                         <?= count($favoris); ?> sauvegardée<?= count($favoris) > 1 ? 's' : '' ?>
                     </span>
                 </div>
