@@ -6,59 +6,68 @@ require_once "../../security/auth-guard.php";
 require_auth();
 $route_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_FILENAME);
 $parent_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME);
-
-if (!isset($_GET["id"])) {
+if (!isset($_GET['id'])) {
     header('Location: /user/messages/');
-    exit();
+    exit;
 }
-$current_user_id = (int)($_SESSION['user_id']);
-$chat_room_id = (int)$_GET["id"];
 
-$sql_chat_room = "SELECT * FROM chat_rooms WHERE id = $chat_room_id AND (seller_id = $current_user_id OR buyer_id = $current_user_id)";
-$result_chat_room = mysqli_query($db, $sql_chat_room);
-$chat_room = mysqli_fetch_assoc($result_chat_room);
+$current_user_id = (int) $_SESSION['user_id'];
+$chat_room_id = (int) $_GET['id'];
 
-if (!$chat_room) {
+$sql = "
+    SELECT
+        cr.id,
+        cr.buyer_id,
+        cr.seller_id,
+        p.title,
+        p.price,
+        p.img,
+        u.first_name
+    FROM chat_rooms cr
+    JOIN posts p
+        ON p.id = cr.post_id
+    JOIN users u
+        ON u.id = CASE
+            WHEN $current_user_id = cr.seller_id THEN cr.buyer_id
+            ELSE cr.seller_id
+        END
+    WHERE cr.id = $chat_room_id
+      AND ($current_user_id IN (cr.seller_id, cr.buyer_id))
+";
+
+$result = mysqli_query($db, $sql);
+$chat = mysqli_fetch_assoc($result);
+
+if (!$chat) {
     header('Location: /');
-    exit();
+    exit;
 }
 
-$post_id = (int)$chat_room['post_id'];
+$recipient_name = $chat['first_name'];
+$avatar_initial = strtoupper($recipient_name[0] ?? 'A');
 
-$sql_post = "SELECT title, price, user_id FROM posts WHERE id = $post_id";
-$result_post = mysqli_query($db, $sql_post);
-$post = mysqli_fetch_assoc($result_post);
+$sql_messages = "
+    SELECT content, created_at, sender_id
+    FROM messages
+    WHERE chat_room_id = $chat_room_id
+    ORDER BY created_at
+";
 
-$seller_id = (int)($post['user_id'] ?? 0);
-$buyer_id = (int)($chat_room['buyer_id'] ?? 0);
-
-$recipient_id = ($current_user_id === $seller_id) ? $buyer_id : $seller_id;
-
-$sql_user = "SELECT first_name FROM users WHERE id = $recipient_id";
-$result_user = mysqli_query($db, $sql_user);
-$user_data = mysqli_fetch_assoc($result_user);
-$recipient_name = $user_data['first_name'] ?? 'Anonymous';
-$avatar_initial = strtoupper(substr($recipient_name, 0, 1));
-
-$sql_messages = "SELECT content, created_at, sender_id 
-                 FROM messages 
-                 WHERE chat_room_id = $chat_room_id 
-                 ORDER BY created_at ASC";
 $result_messages = mysqli_query($db, $sql_messages);
+
 $messages = [];
 
-while ($message = mysqli_fetch_assoc($result_messages)) {
-    $messages[] = [ 
-        "type" => $current_user_id === (int)$message['sender_id'] ? 'out' : 'in', 
-        "content" => $message['content'],
-        "hour" => (new DateTime($message['created_at']))->format('H:i') 
+while ($row = mysqli_fetch_assoc($result_messages)) {
+    $messages[] = [
+        'type'    => ((int)$row['sender_id'] === $current_user_id) ? 'out' : 'in',
+        'content' => $row['content'],
+        'hour'    => date('H:i', strtotime($row['created_at']))
     ];
 }
-
 function chatBubble($message) { 
     $justify = ($message['type'] === 'in') ? 'justify-content-start' : 'justify-content-end';
     $style = ($message['type'] === 'in') ? 'background-color:#e9ecef;color:black;' : 'background-color:#0d6efd;color:white;';
-    $body = htmlspecialchars($message['content'], ENT_QUOTES, 'UTF-8');
+    $body = htmlspecialchars($message['content']);
     echo " 
     <div class='d-flex mb-3 $justify'>
         <div class='p-2 px-3 mw-75' style='border-radius: 10px;$style'>
@@ -83,21 +92,45 @@ function chatBubble($message) {
     <?php NavBar($route_name, $parent_name); ?>
     
     <div class="d-flex flex-column flex-grow-1 overflow-hidden">
-        
-        <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white shadow-sm">
-            <div class="d-flex align-items-center gap-3">
-                <a href="/user/messages/" class="btn btn-light btn-sm rounded-circle text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </a>
-                <div class="bg-warning text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;">
-                    <?= $avatar_initial ?>
+        <div class="p-3 border-bottom bg-white shadow-sm">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/user/messages/"
+                    class="btn btn-light btn-sm rounded-circle text-secondary d-flex align-items-center justify-content-center"
+                    style="width:32px;height:32px;">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+
+                    <div class="bg-primary text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                        style="width:40px;height:40px;">
+                        <?= $avatar_initial ?>
+                    </div>
+
+                    <h6 class="m-0 fw-bold text-dark">
+                        <?= htmlspecialchars($recipient_name) ?>
+                    </h6>
                 </div>
-                <h6 class="m-0 fw-bold text-dark"><?= htmlspecialchars($recipient_name, ENT_QUOTES, 'UTF-8') ?></h6>
-            </div>
-            
-            <div class="text-end bg-light p-2 rounded border" style="max-width: 220px;">
-                <div class="fw-bold text-truncate text-dark" style="font-size: 0.8rem;"><?= htmlspecialchars($post['title'] ?? 'Produit inconnu', ENT_QUOTES, 'UTF-8') ?></div>
-                <span class="fw-bold text-danger" style="font-size: 0.85rem;"><?= number_format($post['price'] ?? 0, 0, ',', ' ') ?> €</span>
+
+                <div class="bg-light p-2 rounded border d-flex align-items-center gap-2 w-100 w-md-auto">
+                    <img
+                        src="<?= htmlspecialchars($chat['img']) ?>"
+                        alt="Produit"
+                        class="rounded"
+                        style="width:60px;height:60px;object-fit:cover;"
+                    >
+
+                    <div class="flex-grow-1">
+                        <div class="fw-bold text-truncate text-dark" style="font-size:0.8rem;">
+                            <?= htmlspecialchars($chat['title']) ?>
+                        </div>
+
+                        <span class="fw-bold text-danger" style="font-size:0.85rem;">
+                            <?= number_format($chat['price'], 0, ',', ' ') ?> €
+                        </span>
+                    </div>
+                </div>
+
             </div>
         </div>
 

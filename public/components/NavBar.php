@@ -53,7 +53,7 @@
                             name:'Déposer une annonce',
                             active:$route_name === 'create',
                             link:'/user/create.php'
-                        ),
+                        );
 
                         NavLink(
                             icon:'fa-solid fa-heart',
