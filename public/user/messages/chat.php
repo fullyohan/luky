@@ -92,75 +92,73 @@ function chatBubble($message) {
     <?php NavBar($route_name, $parent_name); ?>
     
     <div class="d-flex flex-column flex-grow-1 overflow-hidden">
-        <div class="p-3 border-bottom bg-white shadow-sm">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div class="p-3 border-bottom bg-white shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
 
-                <div class="d-flex align-items-center gap-3">
-                    <a href="/user/messages/"
-                    class="btn btn-light btn-sm rounded-circle text-secondary d-flex align-items-center justify-content-center"
-                    style="width:32px;height:32px;">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </a>
+            <div class="d-flex align-items-center gap-3 flex-grow-1 flex-md-grow-0" style="min-width: 0;">
+                <a href="/user/messages/"
+                   class="btn btn-light btn-sm rounded-circle text-secondary d-flex align-items-center justify-content-center flex-shrink-0"
+                   style="width:32px;height:32px;">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
 
-                    <div class="bg-primary text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                        style="width:40px;height:40px;">
-                        <?= $avatar_initial ?>
-                    </div>
-
-                    <h6 class="m-0 fw-bold text-dark">
-                        <?= htmlspecialchars($recipient_name) ?>
-                    </h6>
+                <div class="bg-primary text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
+                     style="width:40px;height:40px;">
+                    <?= $avatar_initial ?>
                 </div>
 
-                <div class="bg-light p-2 rounded border d-flex align-items-center gap-2 w-100 w-md-auto">
-                    <img
-                        src="<?= htmlspecialchars($chat['img']) ?>"
-                        alt="Produit"
-                        class="rounded"
-                        style="width:60px;height:60px;object-fit:cover;"
-                    >
-
-                    <div class="flex-grow-1">
-                        <div class="fw-bold text-truncate text-dark" style="font-size:0.8rem;">
-                            <?= htmlspecialchars($chat['title']) ?>
-                        </div>
-
-                        <span class="fw-bold text-danger" style="font-size:0.85rem;">
-                            <?= number_format($chat['price'], 0, ',', ' ') ?> €
-                        </span>
-                    </div>
-                </div>
-
+                <h6 class="m-0 fw-bold text-dark text-truncate">
+                    <?= htmlspecialchars($recipient_name) ?>
+                </h6>
             </div>
-        </div>
 
-        <div id="chat-box" class="flex-grow-1 overflow-y-auto p-3" style="background-color: #f8f9fa;">
-            <?php if (empty($messages)): ?>
-                <div class="text-center text-muted my-5">
-                    <i class="fa-regular fa-comments fa-2x mb-2"></i>
-                    <p class="small">Aucun message ici. Lancez la discussion !</p>
+            <div class="bg-light p-2 rounded border d-flex align-items-center gap-2 w-100 w-md-auto flex-shrink-0" style="max-width: 300px;">
+                <img src="<?= htmlspecialchars($chat['img']) ?>"
+                     alt="Produit"
+                     class="rounded flex-shrink-0"
+                     style="width:50px;height:50px;object-fit:cover;"
+                >
+
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="fw-bold text-truncate text-dark" style="font-size:0.8rem;">
+                        <?= htmlspecialchars($chat['title']) ?>
+                    </div>
+                    <span class="fw-bold text-danger" style="font-size:0.85rem;">
+                        <?= number_format($chat['price'], 0, ',', ' ') ?> €
+                    </span>
                 </div>
-            <?php else: ?>
-                <?php foreach($messages as $message): ?>
-                    <?php chatBubble($message); ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+            </div>
 
-        <div class="p-3 border-top bg-white">
-            <form action="/handlers/chat-handler.php" method="POST" class="d-flex align-items-center gap-2 mx-auto">
-                <input type="hidden" name="chat_room_id" value="<?= $chat_room_id ?>">
-                <input type="hidden" name="action" value="send">
-                <div class="flex-grow-1">
-                    <input type="text" name="message" class="form-control bg-light border-0 py-2 rounded-pill px-3" placeholder="Écrivez votre message ici..." required autocomplete="off">
-                </div>
-                <button type="submit" class="btn p-0 rounded-circle d-flex align-items-center justify-content-center text-white flex-shrink-0 bg-primary" style="width: 40px; height: 40px;">
-                    <i class="fa-solid fa-paper-plane" style="font-size: 0.95rem;"></i>
-                </button>
-            </form>
         </div>
-
     </div>
+
+    <div id="chat-box" class="flex-grow-1 overflow-y-auto p-3" style="background-color: #f8f9fa;">
+        <?php if (empty($messages)): ?>
+            <div class="text-center text-muted my-5">
+                <i class="fa-regular fa-comments fa-2x mb-2"></i>
+                <p class="small">Aucun message ici. Lancez la discussion !</p>
+            </div>
+        <?php else: ?>
+            <?php foreach($messages as $message): ?>
+                <?php chatBubble($message); ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="p-3 border-top bg-white">
+        <form action="/handlers/chat-handler.php" method="POST" class="d-flex align-items-center gap-2 mx-auto">
+            <input type="hidden" name="chat_room_id" value="<?= $chat_room_id ?>">
+            <input type="hidden" name="action" value="send">
+            <div class="flex-grow-1">
+                <input type="text" name="message" class="form-control bg-light border-0 py-2 rounded-pill px-3" placeholder="Écrivez votre message ici..." required autocomplete="off">
+            </div>
+            <button type="submit" class="btn p-0 rounded-circle d-flex align-items-center justify-content-center text-white flex-shrink-0 bg-primary" style="width: 40px; height: 40px;">
+                <i class="fa-solid fa-paper-plane" style="font-size: 0.95rem;"></i>
+            </button>
+        </form>
+    </div>
+
+</div>
 
     <script>
         const chatBox = document.getElementById('chat-box');
