@@ -87,6 +87,12 @@ function handleRegister($db) {
         exit();
     }
 
+    if (count($password) < 8){
+        $_SESSION['error'] = "Le mot de passe doit depasser 8 caracteres";
+        header("Location: /auth/register.php");
+        exit();
+    }
+
     $ref = $_POST['ref'] ?? '/';
     $email_escaped = mysqli_real_escape_string($db, $email);
     $username_escaped = mysqli_real_escape_string($db, $username);

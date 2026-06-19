@@ -32,6 +32,8 @@ if ($target_user_id === $user_id && in_array($action, ['demote', 'suspend', 'del
     exit();
 }
 
+
+
 switch ($action) {
     case 'promote':
         $sql = "UPDATE users SET status = 'admin' WHERE id = $target_user_id";
