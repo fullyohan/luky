@@ -12,6 +12,9 @@ if (!$user_id || !$action) {
     redirectBack();
 }
 
+
+
+
 switch ($action) {
     case 'create':
         handleCreatePost($db, $user_id);
@@ -105,10 +108,7 @@ function handleModifyPost($db, $user_id){
 
 function handleDeletePost($db, $user_id) {
     $post_id = (int)($_POST['id'] ?? 0);
-    if (!$post_id) {
-        header("Location: /user/annonces.php");
-        exit();
-    }
+    if (!$post_id) redirectBack('/user/annonces.php');
     $sql = "DELETE FROM posts WHERE id = $post_id AND user_id = $user_id";
     if (mysqli_query($db, $sql)) {
         $_SESSION['success'] = "L'annonce a bien été supprimée.";
