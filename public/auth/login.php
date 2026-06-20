@@ -5,11 +5,10 @@
     require_once "../components/TextInput.php";
     require_once "../components/Button.php";
     require_once "../security/auth-guard.php";
+    require_once "../components/Alert.php";
     require_guest();
     $route_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_FILENAME);
     $parent_name = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME);
-    
-
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +16,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Leboncoin</title>
+    <title>Connexion - Luky</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
      <link rel="stylesheet" href="../style.css">
@@ -31,14 +30,13 @@
                 <h2 class="fw-bold fs-3 text-dark mb-2">Bonjour !</h2>
                 <p class="text-muted small">Connectez-vous pour gérer vos annonces et messages.</p>
             </div>
-
             <form action="/handlers/auth-handler.php" method="POST">
                 <?php 
                     TextInput(
                         type: "email", 
                         name: "email", 
                         label: "Adresse email", 
-                        placeholder: "exemple@mail,com", 
+                        placeholder: "exemple@mail.com", 
                         isRequired: true
                     ); 
                     TextInput(
@@ -54,29 +52,22 @@
                         value:'Se connecter',
                         size:'100%'
                     );
-                    if (isset($_SESSION['error'])) {
-                        echo "
-                        <div class='alert alert-danger py-2 px-3 small border-0 mt-4' style='border-radius: 8px;'>
-                        <i class='fa-solid fa-circle-exclamation me-2'></i> {$_SESSION['error']}
-                        </div>
-                        ";
-                        unset($_SESSION['error']);
-                    }
                 ?>
+                <div class="mt-4">
+                    <?= Alert(); ?>
+                </div>
                 <input hidden name="ref" value="<?= $_SERVER['HTTP_REFERER'] ?? '' ?>">
                 <input hidden name="action" value="login">
             </form>
             <div class="text-center mt-3 border-top pt-3">
                 <p class="text-muted small mb-0">
                     Aucun compte ? 
-                    <a href="/auth/register.php" class="text-orange fw-bold text-decoration-none">Créer un compte</a>
+                    <a href="/auth/register.php" class="text-primary fw-bold text-decoration-none">Créer un compte</a>
                 </p>
             </div>
         </div>
     </div>
-
-  <?php Footer($route_name, $parent_name) ?>
-
+    <?php Footer($route_name, $parent_name) ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

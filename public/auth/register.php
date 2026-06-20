@@ -3,6 +3,7 @@
     require_once "../components/NavBar.php";
     require_once "../components/Footer.php";
     require_once "../components/TextInput.php";
+    require_once "../components/Alert.php";
     require_once "../components/Button.php";
     require_once "../security/auth-guard.php";
     require_guest();
@@ -14,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Leboncoin</title>
+    <title>Inscription - Luky</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../style.css">
@@ -69,15 +70,10 @@
                         value:'Créer mon compte',
                         size:'100%'
                     );
-                    if (isset($_SESSION['error'])) {
-                        echo "
-                        <div class='alert alert-danger py-2 px-3 small border-0 mt-4' style='border-radius: 8px;'>
-                        <i class='fa-solid fa-circle-exclamation me-2'></i> {$_SESSION['error']}
-                        </div>
-                        ";
-                        unset($_SESSION['error']);
-                    }
                 ?>
+                <div class="mt-4">
+                    <?= Alert(); ?>
+                </div>
                 <input hidden name="action" value="register">
                 <input hidden name="ref" value="<?= $_SERVER['HTTP_REFERER'] ?>">
             </form>
@@ -85,7 +81,7 @@
             <div class="text-center mt-3 border-top pt-3">
                 <p class="text-muted small mb-0">
                     Vous avez déjà un compte ? 
-                   <a href="login.php" class="text-orange fw-bold text-decoration-none">Se connecter</a>
+                   <a href="login.php" class="text-primary fw-bold text-decoration-none">Se connecter</a>
                 </p>
             </div>
         </div>
