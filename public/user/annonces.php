@@ -36,6 +36,7 @@ while ($annonce = mysqli_fetch_assoc($result)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Compte - Leboncoin</title>
+    <link rel="shortcut icon" href="../fav.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
@@ -51,8 +52,8 @@ while ($annonce = mysqli_fetch_assoc($result)) {
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold m-0 fs-5">Mes annonces en ligne</h4>
                         <span class="badge bg-primary text-white rounded-pill px-3"><?= count($annonces); ?> annonces</span>
-                        <?= Alert()?>
                     </div>
+                     <?= Alert()?>
 
                     <div class="table-responsive">
                         <?php

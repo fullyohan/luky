@@ -13,8 +13,6 @@ if (!$user_id || !$action) {
 }
 
 
-
-
 switch ($action) {
     case 'create':
         handleCreatePost($db, $user_id);

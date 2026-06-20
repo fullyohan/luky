@@ -61,7 +61,12 @@ function handleLogin($db) {
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['created_at'] = $user['created_at'];
-        header("Location: " .($ref === 'http://lebonclone.fr/auth/login.php' ? '/' : $ref));
+        
+        if (strpos($ref, 'login.php') !== false || strpos($ref, 'register.php') !== false) {
+            header("Location: /");
+        } else {
+            header("Location: " . $ref);
+        }
     } else {
         $_SESSION['error'] = "Adresse mail ou Mot de passe incorrect.";
         header("Location: /auth/login.php");
@@ -87,8 +92,8 @@ function handleRegister($db) {
         exit();
     }
 
-    if (count($password) < 8){
-        $_SESSION['error'] = "Le mot de passe doit depasser 8 caracteres";
+    if (strlen($password) < 8){
+        $_SESSION['error'] = "Le mot de passe doit dépasser 8 caractères";
         header("Location: /auth/register.php");
         exit();
     }
@@ -106,16 +111,20 @@ function handleRegister($db) {
     }
 
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
-    $sql_insert = "INSERT INTO users (last_name, first_name, email, password, created_at) 
-                   VALUES ('$username_escaped', '$username_escaped', '$email_escaped', '$password_hash', NOW())";
+    $sql_insert = "INSERT INTO users (first_name, email, password, created_at) 
+                   VALUES ('$username_escaped', '$email_escaped', '$password_hash', NOW())";
     
     if (mysqli_query($db, $sql_insert)) {
         $_SESSION['user_id'] = (int)mysqli_insert_id($db);
         $_SESSION['first_name'] = $username;
         $_SESSION['email'] = $email;
         $_SESSION['created_at'] = date('Y-m-d H:i:s'); 
-        
-        header("Location: $ref");
+       
+        if (strpos($ref, 'login.php') !== false || strpos($ref, 'register.php') !== false) {
+            header("Location: /");
+        } else {
+            header("Location: " . $ref);
+        }
     } else {
         $_SESSION['error'] = "Erreur lors de l'inscription.";
         header("Location: /auth/register.php");
@@ -155,7 +164,7 @@ function handleUpdateProfile($db) {
         exit();
     }
 
-    $sql_update = "UPDATE users SET first_name = '$username_escaped', last_name = '$username_escaped', email = '$email_escaped' WHERE id = $user_id";
+    $sql_update = "UPDATE users SET first_name = '$username_escaped', email = '$email_escaped' WHERE id = $user_id";
     mysqli_query($db, $sql_update);
     
     $_SESSION['first_name'] = $username;
