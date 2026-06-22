@@ -34,7 +34,7 @@ switch ($action) {
             exit();
         }
 
-        // Correction : Changement du nom de table 'chats' vers 'chat_rooms'
+      
         $sql_check = "SELECT id FROM chat_rooms WHERE post_id = $post_id AND buyer_id = $sender_id";
         $result_check = mysqli_query($db, $sql_check);
         $chat = mysqli_fetch_assoc($result_check);
@@ -42,7 +42,6 @@ switch ($action) {
         if ($chat) {
             $chat_id = (int)$chat['id'];
         } else {
-            // Correction : Insertion dans 'chat_rooms'
             $sql_create_chat = "INSERT INTO chat_rooms (post_id, buyer_id, seller_id, created_at) 
                                 VALUES ($post_id, $sender_id, $seller_id, NOW())";
             if (mysqli_query($db, $sql_create_chat)) {
@@ -54,12 +53,10 @@ switch ($action) {
         }
 
         $content_clean = mysqli_real_escape_string($db, $content);
-        // Correction : Utilisation de la variable '$chat_id' initialisée juste au-dessus
         $sql_msg = "INSERT INTO messages (chat_room_id, sender_id, content, created_at) 
                     VALUES ($chat_id, $sender_id, '$content_clean', NOW())";
         mysqli_query($db, $sql_msg);
 
-        // Correction : Redirection vers ta vue de discussion 'chat.php' avec le bon ID
         header("Location: /user/messages/chat.php?id=" . $chat_id);
         exit();
 
@@ -71,8 +68,6 @@ switch ($action) {
             header("Location: /user/messages/");
             exit();
         }
-
-        // Correction : Vérification d'accès sur la table 'chat_rooms'
         $sql_verify_access = "SELECT id FROM chat_rooms WHERE id = $chat_room_id AND (buyer_id = $sender_id OR seller_id = $sender_id)";
         $result_verify = mysqli_query($db, $sql_verify_access);
         
@@ -85,8 +80,6 @@ switch ($action) {
         $sql_msg = "INSERT INTO messages (chat_room_id, sender_id, content, created_at) 
                     VALUES ($chat_room_id, $sender_id, '$content_clean', NOW())";
         mysqli_query($db, $sql_msg);
-
-        // Correction : Redirection vers 'chat.php'
         header("Location: /user/messages/chat.php?id=" . $chat_room_id);
         exit();
 
