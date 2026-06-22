@@ -113,7 +113,7 @@ password_hash($password, PASSWORD_BCRYPT);
 ## 📂 Project Structure
 
 ```text
-marketplace/
+luky/
 │
 ├── config/
 │   ├── database.php       # Database connection
